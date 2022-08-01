@@ -1,0 +1,36 @@
+name: Manual release
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        type: choice
+        description: Public, external or internal release.
+        options:
+          - internal
+          - external
+          - public
+        required: true
+      release:
+        type: boolean
+        description: Actually releasing to a repository or just testing build.
+        required: false
+        default: true
+      distribution:
+        type: choice
+        description: Which ROS distribution to run the workflow with.
+        options:
+          - melodic
+          - noetic
+        required: true
+
+jobs:
+  manual:
+    uses: SAGARobotics/SagaWorkflows/.github/workflows/ci.yml@v3.3
+    with:
+      release: ${{ github.event.inputs.release }}
+      release-type: ${{ github.event.inputs.release-type }}
+      distribution: ${{ github.event.inputs.distribution }}
+    secrets:
+      pat-token: ${{ secrets.CI_PAT_PUBLIC }}
+      repo-user: ${{ secrets.SAGA_REPO_PUBLIC_WRITE_USER }}
+      repo-pass: ${{ secrets.SAGA_REPO_PUBLIC_WRITE_PASS }}
